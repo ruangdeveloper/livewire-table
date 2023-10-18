@@ -1,0 +1,30 @@
+{
+    "version": "1.0.0",
+    "name": "ruangdeveloper/livewire-table",
+    "description": "Create beautiful table with livewire",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "RuangDeveloper\\LivewireTable\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "RuangDeveloper\\LivewireTable\\LivewireTableServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Ruang Developer",
+            "email": "primary.ruangdeveloper@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "laravel/framework": "^10.0.0",
+        "livewire/livewire": "^3.0.10"
+    }
+}

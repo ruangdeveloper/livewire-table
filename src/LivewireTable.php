@@ -10,6 +10,9 @@ use Livewire\Component;
 
 abstract class LivewireTable extends Component
 {
+    const THEME_BOOTSTRAP = 'bootstrap';
+    const THEME_TAILWIND = 'tailwind';
+
     #[Url(as: 'sort')]
     public $livewireTable__sortBy = '';
 
@@ -24,6 +27,11 @@ abstract class LivewireTable extends Component
     public bool $livewireTable__isAllSelected = false;
 
     public string $livewireTable__selectedBulkAction = '';
+
+    public function tableTheme(): string
+    {
+        return self::THEME_BOOTSTRAP;
+    }
 
     public function columns(): array
     {
@@ -96,8 +104,8 @@ abstract class LivewireTable extends Component
         }
 
         foreach ($bulkActions as $bulkAction) {
-            if ($bulkAction['name'] === $this->bulkAction) {
-                ($bulkAction['handler'])($this->selectedItems);
+            if ($bulkAction['name'] === $this->livewireTable__selectedBulkAction) {
+                ($bulkAction['handler'])($this->livewireTable__selectedItems);
                 $this->reset(['livewireTable__selectedItems', 'livewireTable__isAllSelected', 'livewireTable__selectedBulkAction']);
             }
         }
@@ -120,24 +128,6 @@ abstract class LivewireTable extends Component
     {
         if (str_starts_with($name, 'livewireTable__')) {
             if ($name === 'livewireTable__search') {
-                $this->resetPage();
-                $this->reset([
-                    'livewireTable__selectedItems',
-                    'livewireTable__isAllSelected',
-                    'livewireTable__selectedBulkAction'
-                ]);
-            }
-
-            if ($name === 'livewireTable__sortBy') {
-                $this->resetPage();
-                $this->reset([
-                    'livewireTable__selectedItems',
-                    'livewireTable__isAllSelected',
-                    'livewireTable__selectedBulkAction'
-                ]);
-            }
-
-            if ($name === 'livewireTable__sortDirection') {
                 $this->resetPage();
                 $this->reset([
                     'livewireTable__selectedItems',
@@ -194,6 +184,13 @@ abstract class LivewireTable extends Component
             $this->livewireTable__sortBy = $sortBy;
             $this->livewireTable__sortDirection = 'asc';
         }
+
+        $this->resetPage();
+        $this->reset([
+            'livewireTable__selectedItems',
+            'livewireTable__isAllSelected',
+            'livewireTable__selectedBulkAction'
+        ]);
     }
 
     protected function getSortBy(): string
@@ -226,6 +223,6 @@ abstract class LivewireTable extends Component
         $viewData['livewireTable__bulkActionOptionsLabel'] = $this->bulkActionOptionsLabel();
         $viewData['livewireTable__selectedBulkActionItem'] = $this->getSelectedBulkAction();
 
-        return view('livewire-table::' . config('livewire-table.theme'), $viewData);
+        return view('livewire-table::' . $this->tableTheme(), $viewData);
     }
 }

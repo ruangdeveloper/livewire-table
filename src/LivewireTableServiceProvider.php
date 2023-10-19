@@ -6,11 +6,6 @@ use Illuminate\Support\ServiceProvider;
 
 class LivewireTableServiceProvider extends ServiceProvider
 {
-    public function register()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'livewire-table');
-    }
-
     public function boot()
     {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'livewire-table');

@@ -14,7 +14,7 @@ trait WithSearching
         return 'Search...';
     }
 
-    public function searchLabel(): string
+    public function searchLabel(): ?string
     {
         return 'Search';
     }

@@ -13,7 +13,7 @@ trait WithBulkAction
 
     public string $LTselectedBulkAction = '';
 
-    public function bulkActionLabel(): string
+    public function bulkActionLabel(): ?string
     {
         return 'Bulk Action';
     }

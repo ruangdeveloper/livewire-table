@@ -2,17 +2,21 @@
     @if ($LTwithSearching || $LTwithBulkAction || $LTwithFilter || $LTwithExport)
         <div class="mb-3 d-flex flex-wrap gap-3 align-items-center">
             @if ($LTwithSearching)
-                <div class="bg-white shadow-sm border rounded p-2 flex-fill">
-                    <label for="LTsearch" class="form-label">{{ $LTsearchLabel }}</label>
+                <div class="flex-fill">
+                    @if ($LTsearchLabel)
+                        <label for="LTsearch" class="form-label">{{ $LTsearchLabel }}</label>
+                    @endif
                     <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch" class="form-control"
                         type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
                 </div>
             @endif
             @if ($LTwithBulkAction && count($LTselectedItems) > 0)
-                <div class="bg-white shadow-sm border rounded p-2 flex-fill">
-                    <div>
-                        <label for="LTbulkAction" class="form-label">{{ $LTbulkActionLabel }}</label>
-                    </div>
+                <div class="flex-fill">
+                    @if ($LTbulkActionLabel)
+                        <div>
+                            <label for="LTbulkAction" class="form-label">{{ $LTbulkActionLabel }}</label>
+                        </div>
+                    @endif
                     <div class="d-flex gap-2 align-items-center flex-fill">
                         <div class="flex-fill">
                             <select class="form-select" wire:model.live="LTselectedBulkAction">
@@ -35,12 +39,13 @@
                 </div>
             @endif
             @if ($LTwithFilter)
-                <div
-                    class="bg-white shadow-sm border rounded p-2 d-inline-flex flex-wrap gap-3 align-items-center flex-fill">
+                <div class="d-inline-flex flex-wrap gap-3 align-items-center flex-fill">
                     @foreach ($LTfilters as $LTfilterIndex => $LTfilterItem)
                         <div class="flex-fill">
-                            <label for="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}"
-                                class="form-label">{{ $LTfilterItem->getLabel() }}</label>
+                            @if ($LTfilterItem->getLabel())
+                                <label for="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}"
+                                    class="form-label">{{ $LTfilterItem->getLabel() }}</label>
+                            @endif
                             <select wire:model.live="LTfilterData.{{ $LTfilterItem->getName() }}"
                                 id="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}" class="form-select">
                                 @foreach ($LTfilterItem->getFilterOptions() as $LTfilterOptionIndex => $LTfilterOptionItem)
@@ -55,10 +60,12 @@
                 </div>
             @endif
             @if ($LTwithExport)
-                <div class="bg-white shadow-sm border rounded p-2 flex-fill">
-                    <div>
-                        <label for="LTexport" class="form-label">{{ $LTexportLabel }}</label>
-                    </div>
+                <div class="flex-fill text-end">
+                    @if ($LTexportLabel)
+                        <div>
+                            <label for="LTexport" class="form-label">{{ $LTexportLabel }}</label>
+                        </div>
+                    @endif
                     @foreach ($LTexporters as $LTexporterIndex => $LTexporterItem)
                         <button wire:click="handleExport('{{ $LTexporterItem->getName() }}')"
                             class="btn btn-primary">{{ $LTexporterItem->getLabel() }}</button>
@@ -213,7 +220,10 @@
     @if ($LTisPaginated)
         <div style="overflow-x: auto;">
             <div class="mt-3 d-flex justify-content-end align-items-center gap-2">
-                @if ($LTwithPagination)
+                <div>
+                    {{ $LTdata->links() }}
+                </div>
+                @if ($LTwithPagination && $LTdata->hasPages())
                     <div>
                         <select wire:model.live="LTperPage" class="form-select mb-3">
                             @foreach ($LTperPageOptions as $LTperPageOption)
@@ -224,9 +234,6 @@
                         </select>
                     </div>
                 @endif
-                <div>
-                    {{ $LTdata->links() }}
-                </div>
             </div>
         </div>
     @endif

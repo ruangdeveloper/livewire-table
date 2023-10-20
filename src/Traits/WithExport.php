@@ -11,7 +11,7 @@ trait WithExport
         return [];
     }
 
-    public function exportLabel(): string
+    public function exportLabel(): ?string
     {
         return 'Export';
     }

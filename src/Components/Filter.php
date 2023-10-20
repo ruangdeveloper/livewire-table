@@ -5,16 +5,16 @@ namespace RuangDeveloper\LivewireTable\Components;
 class Filter
 {
     protected string $name;
-    protected string $label;
+    protected ?string $label;
     protected array $filterOptions = [];
 
-    private function __construct(string $name, string $label)
+    private function __construct(string $name, ?string $label = null)
     {
         $this->name = $name;
         $this->label = $label;
     }
 
-    public static function make(string $name, string $label): Filter
+    public static function make(string $name, ?string $label = null): Filter
     {
         return new static($name, $label);
     }
@@ -34,7 +34,7 @@ class Filter
         return $this->name;
     }
 
-    public function getLabel(): string
+    public function getLabel(): ?string
     {
         return $this->label;
     }

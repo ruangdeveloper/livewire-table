@@ -7,6 +7,9 @@ use RuangDeveloper\LivewireTable\Interfaces\ExporterInterface;
 class CSVExporter implements ExporterInterface
 {
     protected string $fileName = 'export.csv';
+    protected string $delimiter = ',';
+    protected bool $withHeader = true;
+    protected string $label = 'CSV';
 
     public function __construct(?string $fileName = null)
     {
@@ -25,9 +28,30 @@ class CSVExporter implements ExporterInterface
         return $this;
     }
 
+    public function delimiter(string $delimiter): CSVExporter
+    {
+        $this->delimiter = $delimiter;
+
+        return $this;
+    }
+
+    public function withHeader(bool $withHeader): CSVExporter
+    {
+        $this->withHeader = $withHeader;
+
+        return $this;
+    }
+
+    public function label(string $label): CSVExporter
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
     public function getLabel(): string
     {
-        return 'CSV';
+        return $this->label;
     }
 
     public function getName(): string
@@ -39,11 +63,13 @@ class CSVExporter implements ExporterInterface
     {
         $filename = $this->fileName ?? 'export.csv';
         $handle = fopen($filename, 'w+');
-        $headers = collect($columns)->map(function ($column) {
-            return $column->getLabel();
-        })->toArray();
 
-        fputcsv($handle, $headers);
+        if ($this->withHeader) {
+            $headers = collect($columns)->map(function ($column) {
+                return $column->getLabel();
+            })->toArray();
+            fputcsv($handle, $headers, $this->delimiter ?? ',');
+        }
 
         foreach ($data as $index => $item) {
             $row = [];
@@ -51,7 +77,7 @@ class CSVExporter implements ExporterInterface
                 $renderer = $column->getExportRenderer();
                 $row[] = call_user_func($renderer, $item, $index);
             }
-            fputcsv($handle, $row);
+            fputcsv($handle, $row, $this->delimiter ?? ',');
         }
 
         fclose($handle);

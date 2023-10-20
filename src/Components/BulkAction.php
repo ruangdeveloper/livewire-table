@@ -1,6 +1,6 @@
 <?php
 
-namespace RuangDeveloper\LivewireTable;
+namespace RuangDeveloper\LivewireTable\Components;
 
 use Closure;
 

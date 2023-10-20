@@ -1,6 +1,6 @@
 <?php
 
-namespace RuangDeveloper\LivewireTable;
+namespace RuangDeveloper\LivewireTable\Components;
 
 use Closure;
 
@@ -10,6 +10,7 @@ class Column
     protected string $label;
     protected bool $sortable = false;
     protected ?Closure $render = null;
+    protected ?Closure $exportRender = null;
     protected bool $hidden = false;
 
     private function __construct(string $name, string $label)
@@ -38,6 +39,13 @@ class Column
         return $this;
     }
 
+    public function exportRender(Closure $exportRender): Column
+    {
+        $this->exportRender = $exportRender;
+
+        return $this;
+    }
+
     public function hidden(bool $hidden = false): Column
     {
         $this->hidden = $hidden;
@@ -62,6 +70,15 @@ class Column
 
     public function getRenderer(): ?Closure
     {
+        return $this->render;
+    }
+
+    public function getExportRenderer(): ?Closure
+    {
+        if ($this->exportRender) {
+            return $this->exportRender;
+        }
+
         return $this->render;
     }
 

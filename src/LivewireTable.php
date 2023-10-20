@@ -2,31 +2,24 @@
 
 namespace RuangDeveloper\LivewireTable;
 
-use Closure;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\Url;
 use Livewire\Component;
+use RuangDeveloper\LivewireTable\Traits\WithSorting;
+use RuangDeveloper\LivewireTable\Traits\WithSearching;
+use RuangDeveloper\LivewireTable\Traits\WithBulkAction;
+use RuangDeveloper\LivewireTable\Traits\WithFilter;
+use RuangDeveloper\LivewireTable\Traits\WithColumnSelection;
+use RuangDeveloper\LivewireTable\Traits\WithPagination;
+use RuangDeveloper\LivewireTable\Traits\WithExport;
 
 abstract class LivewireTable extends Component
 {
+    use WithSorting;
+
     const THEME_BOOTSTRAP = 'bootstrap';
     const THEME_TAILWIND = 'tailwind';
-
-    #[Url(as: 'sort')]
-    public $livewireTable__sortBy = '';
-
-    #[Url(as: 'direction')]
-    public $livewireTable__sortDirection = '';
-
-    #[Url(as: 'search')]
-    public $livewireTable__search = '';
-
-    public array $livewireTable__selectedItems = [];
-
-    public bool $livewireTable__isAllSelected = false;
-
-    public string $livewireTable__selectedBulkAction = '';
 
     public function tableTheme(): string
     {
@@ -38,7 +31,7 @@ abstract class LivewireTable extends Component
         return [];
     }
 
-    public function data(): array|Collection|LengthAwarePaginator
+    public function data(): Collection|LengthAwarePaginator|Paginator|array
     {
         return [];
     }
@@ -48,180 +41,74 @@ abstract class LivewireTable extends Component
         return 'No data available.';
     }
 
-    public function withSearching(): bool
+    private function withSearching(): bool
     {
-        return false;
+        return in_array(WithSearching::class, class_uses($this));
     }
 
-    public function searchInputPlaceholder(): string
+    private function withBulkAction(): bool
     {
-        return 'Search...';
+        return in_array(WithBulkAction::class, class_uses($this));
     }
 
-    public function withBulkAction(): bool
+    private function withFilter(): bool
     {
-        return false;
+        return in_array(WithFilter::class, class_uses($this));
     }
 
-    public function bulkActions(): array
+    private function withColumnSelection(): bool
     {
-        return [];
+        return in_array(WithColumnSelection::class, class_uses($this));
     }
 
-    public function bulkActionCheckBoxFiller(): Closure
+    private function withPagination(): bool
     {
-        return function ($item, $index) {
-            return $index;
-        };
+        return in_array(WithPagination::class, class_uses($this));
     }
 
-    public function bulkActionButtonLabel(): string
+    private function withExport(): bool
     {
-        return 'Apply';
-    }
-
-    public function bulkActionOptionsLabel(): string
-    {
-        return 'Choose an action...';
-    }
-
-    public function getSelectedItems(): array
-    {
-        return $this->livewireTable__selectedItems;
-    }
-
-    public function executeBulkAction()
-    {
-        $bulkActions = collect($this->bulkActions())->map(function (BulkAction $bulkAction) {
-            return [
-                'name' => $bulkAction->getName(),
-                'handler' => $bulkAction->getHandler(),
-            ];
-        })->toArray();
-
-        if ($this->livewireTable__selectedBulkAction === '') {
-            return;
-        }
-
-        foreach ($bulkActions as $bulkAction) {
-            if ($bulkAction['name'] === $this->livewireTable__selectedBulkAction) {
-                ($bulkAction['handler'])($this->livewireTable__selectedItems);
-                $this->reset(['livewireTable__selectedItems', 'livewireTable__isAllSelected', 'livewireTable__selectedBulkAction']);
-            }
-        }
-    }
-
-    public function getSelectedBulkAction(): ?BulkAction
-    {
-        $bulkActions = $this->bulkActions();
-
-        foreach ($bulkActions as $bulkAction) {
-            if ($bulkAction->getName() === $this->livewireTable__selectedBulkAction) {
-                return $bulkAction;
-            }
-        }
-
-        return null;
-    }
-
-    public function updated(string $name, mixed $value): void
-    {
-        if (str_starts_with($name, 'livewireTable__')) {
-            if ($name === 'livewireTable__search') {
-                $this->resetPage();
-                $this->reset([
-                    'livewireTable__selectedItems',
-                    'livewireTable__isAllSelected',
-                    'livewireTable__selectedBulkAction'
-                ]);
-            }
-
-            if (str_starts_with($name, 'livewireTable__selectedItems')) {
-                if (count($this->livewireTable__selectedItems) > 0) {
-                    if (count($this->livewireTable__selectedItems) === count($this->data())) {
-                        $this->livewireTable__isAllSelected = true;
-                    } else {
-                        $this->livewireTable__isAllSelected = false;
-                    }
-                } else {
-                    $this->livewireTable__selectedBulkAction = '';
-                }
-
-                $this->livewireTable__selectedItems = collect($this->livewireTable__selectedItems)->map(function ($item) {
-                    if (filter_var($item, FILTER_VALIDATE_INT) !== false) {
-                        return (int) $item;
-                    }
-
-                    return $item;
-                })->toArray();
-            }
-
-            if ($name === 'livewireTable__isAllSelected') {
-                if ($value) {
-                    $selectedItems = [];
-                    foreach ($this->data() as $index => $item) {
-                        $selectedItems[] = ($this->bulkActionCheckBoxFiller())($item, $index);
-                    }
-
-                    $this->livewireTable__selectedItems = $selectedItems;
-                } else {
-                    $this->livewireTable__selectedItems = [];
-                }
-            }
-        }
-    }
-
-    public function sort(string $sortBy): void
-    {
-        if ($this->livewireTable__sortBy === $sortBy) {
-            if ($this->livewireTable__sortDirection === 'asc') {
-                $this->livewireTable__sortDirection = 'desc';
-            } else {
-                $this->livewireTable__sortBy = '';
-                $this->livewireTable__sortDirection = '';
-            }
-        } else {
-            $this->livewireTable__sortBy = $sortBy;
-            $this->livewireTable__sortDirection = 'asc';
-        }
-
-        $this->resetPage();
-        $this->reset([
-            'livewireTable__selectedItems',
-            'livewireTable__isAllSelected',
-            'livewireTable__selectedBulkAction'
-        ]);
-    }
-
-    protected function getSortBy(): string
-    {
-        return $this->livewireTable__sortBy;
-    }
-
-    protected function getSortDirection(): string
-    {
-        return $this->livewireTable__sortDirection;
-    }
-
-    protected function getSearchKeyword(): string
-    {
-        return $this->livewireTable__search;
+        return in_array(WithExport::class, class_uses($this));
     }
 
     public function render()
     {
-        $viewData['livewireTable__columns'] = $this->columns();
-        $viewData['livewireTable__data'] = $this->data();
-        $viewData['livewireTable__isPaginated'] = $viewData['livewireTable__data'] instanceof LengthAwarePaginator;
-        $viewData['livewireTable__noDataMessage'] = $this->noDataMessage();
-        $viewData['livewireTable__withSearching'] = $this->withSearching();
-        $viewData['livewireTable__searchInputPlaceholder'] = $this->searchInputPlaceholder();
-        $viewData['livewireTable__withBulkAction'] = $this->withBulkAction();
-        $viewData['livewireTable__bulkActions'] = $this->bulkActions();
-        $viewData['livewireTable__bulkActionCheckBoxFiller'] = $this->bulkActionCheckBoxFiller();
-        $viewData['livewireTable__bulkActionButtonLabel'] = $this->bulkActionButtonLabel();
-        $viewData['livewireTable__bulkActionOptionsLabel'] = $this->bulkActionOptionsLabel();
-        $viewData['livewireTable__selectedBulkActionItem'] = $this->getSelectedBulkAction();
+        $viewData['LTcolumns'] = $this->columns();
+        $viewData['LTwithColumnSelection'] = $this->withColumnSelection();
+        if ($viewData['LTwithColumnSelection']) {
+            $viewData['LTcolumns'] = $this->getSelectedColumns();
+            $viewData['LTunselectedColumns'] = $this->getUnselectedColumns();
+        }
+        $viewData['LTdata'] = $this->data();
+        $viewData['LTisPaginated'] = $viewData['LTdata'] instanceof LengthAwarePaginator || $viewData['LTdata'] instanceof Paginator;
+        $viewData['LTnoDataMessage'] = $this->noDataMessage();
+        $viewData['LTwithSearching'] = $this->withSearching();
+        if ($viewData['LTwithSearching']) {
+            $viewData['LTsearchInputPlaceholder'] = $this->searchInputPlaceholder();
+            $viewData['LTsearchLabel'] = $this->searchLabel();
+        }
+        $viewData['LTwithBulkAction'] = $this->withBulkAction();
+        if ($viewData['LTwithBulkAction']) {
+            $viewData['LTbulkActions'] = $this->bulkActions();
+            $viewData['LTbulkActionLabel'] = $this->bulkActionLabel();
+            $viewData['LTbulkActionCheckBoxFiller'] = $this->bulkActionCheckBoxFiller();
+            $viewData['LTbulkActionButtonLabel'] = $this->bulkActionButtonLabel();
+            $viewData['LTbulkActionOptionsLabel'] = $this->bulkActionOptionsLabel();
+            $viewData['LTselectedBulkActionItem'] = $this->getSelectedBulkAction();
+        }
+        $viewData['LTwithFilter'] = $this->withFilter();
+        if ($viewData['LTwithFilter']) {
+            $viewData['LTfilters'] = $this->filters();
+        }
+        $viewData['LTwithPagination'] = $this->withPagination();
+        if ($viewData['LTwithPagination']) {
+            $viewData['LTperPageOptions'] = $this->getPerPageOptions();
+        }
+        $viewData['LTwithExport'] = $this->withExport();
+        if ($viewData['LTwithExport']) {
+            $viewData['LTexportLabel'] = $this->exportLabel();
+            $viewData['LTexporters'] = $this->exporters();
+        }
 
         return view('livewire-table::' . $this->tableTheme(), $viewData);
     }

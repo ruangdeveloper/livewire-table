@@ -6,19 +6,19 @@ use RuangDeveloper\LivewireTable\Interfaces\ExporterInterface;
 
 trait WithExport
 {
-    public function exporters(): array
+    public function getExporters(): array
     {
         return [];
     }
 
-    public function exportLabel(): ?string
+    public function getExportLabel(): ?string
     {
         return 'Export';
     }
 
     public function handleExport(string $exporterName)
     {
-        $exporter = collect($this->exporters())
+        $exporter = collect($this->getExporters())
             ->filter(fn ($exporter) => $exporter->getName() === $exporterName)
             ->first();
 
@@ -30,7 +30,7 @@ trait WithExport
             throw new \Exception('Exporter must be instance of ' . ExporterInterface::class);
         }
 
-        $columns = collect($this->columns())
+        $columns = collect($this->getColumns())
             ->filter(fn ($column) => $column->isHidden() === false)
             ->toArray();
 
@@ -38,6 +38,6 @@ trait WithExport
             $columns = $this->getSelectedColumns();
         }
 
-        return $exporter->execute($columns, $this->data());
+        return $exporter->execute($columns, $this->getData());
     }
 }

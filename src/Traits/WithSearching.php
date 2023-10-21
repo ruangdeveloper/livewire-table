@@ -2,37 +2,52 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
-use Livewire\Attributes\Url;
-
 trait WithSearching
 {
-    #[Url(as: 'search')]
     public $LTsearch = '';
 
-    public function searchInputPlaceholder(): string
+    public function getSearchInputPlaceholder(): string
     {
         return 'Search...';
     }
 
-    public function searchLabel(): ?string
+    public function getSearchLabel(): ?string
     {
         return 'Search';
     }
 
-    public function updatedLTSearch()
+    public function updatedWithSearching($name, $value)
     {
-        $this->resetPage();
-        if (in_array(WithBulkAction::class, class_uses($this))) {
-            $this->reset([
-                'LTselectedItems',
-                'LTisAllSelected',
-                'LTselectedBulkAction',
-            ]);
+        if (str_starts_with($name, 'LTsearch')) {
+            $this->resetPage();
+            if (in_array(WithBulkAction::class, class_uses($this))) {
+                $this->reset([
+                    'LTselectedItems',
+                    'LTisAllSelected',
+                    'LTselectedBulkAction',
+                ]);
+            }
         }
     }
 
-    protected function getSearchKeyword(): string
+    public function enableSearchQueryString(): bool
+    {
+        return false;
+    }
+
+    public function getSearchKeyword(): string
     {
         return $this->LTsearch;
+    }
+
+    protected function queryStringWithSearching()
+    {
+        if (!$this->enableSearchQueryString()) return [];
+
+        return [
+            'LTsearch' => [
+                'as' => 'search',
+            ],
+        ];
     }
 }

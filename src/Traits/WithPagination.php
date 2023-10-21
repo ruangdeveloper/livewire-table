@@ -2,19 +2,32 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
-use Livewire\Attributes\Url;
 use Livewire\WithPagination as LivewireWithPagination;
+use RuangDeveloper\LivewireTable\Traits\WithBulkAction;
 
 trait WithPagination
 {
     use LivewireWithPagination;
 
-    #[Url(as: 'per_page')]
-    public $LTperPage = 10;
+    public $LTperPage = null;
 
-    public function updatedLTperPage(): void
+    public function mountWithPagination()
     {
-        $this->resetPage();
+        $this->LTperPage = $this->LTperPage ?? $this->getPerPage();
+    }
+
+    public function updatedWithPagination($name, $value)
+    {
+        if (str_starts_with($name, 'LTperPage')) {
+            $this->resetPage();
+            if (in_array(WithBulkAction::class, class_uses($this))) {
+                $this->reset([
+                    'LTselectedItems',
+                    'LTisAllSelected',
+                    'LTselectedBulkAction',
+                ]);
+            }
+        }
     }
 
     public function getPerPageOptions(): array
@@ -29,5 +42,15 @@ trait WithPagination
         }
 
         return $this->LTperPage;
+    }
+
+    protected function queryStringWithPagination()
+    {
+        return [
+            'LTperPage' => [
+                'as' => 'per_page',
+                'except' => '',
+            ],
+        ];
     }
 }

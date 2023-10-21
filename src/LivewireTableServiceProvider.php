@@ -11,10 +11,6 @@ class LivewireTableServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'livewire-table');
 
         $this->publishes([
-            __DIR__ . '/../config/config.php' => config_path('livewire-table.php'),
-        ], 'config');
-
-        $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/livewire-table'),
         ], 'views');
     }

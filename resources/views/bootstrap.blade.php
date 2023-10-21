@@ -10,34 +10,6 @@
                         type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
                 </div>
             @endif
-            @if ($LTwithBulkAction && count($LTselectedItems) > 0)
-                <div class="flex-fill">
-                    @if ($LTbulkActionLabel)
-                        <div>
-                            <label for="LTbulkAction" class="form-label">{{ $LTbulkActionLabel }}</label>
-                        </div>
-                    @endif
-                    <div class="d-flex gap-2 align-items-center flex-fill">
-                        <div class="flex-fill">
-                            <select class="form-select" wire:model.live="LTselectedBulkAction">
-                                <option value="">{{ $LTbulkActionOptionsLabel }}</option>
-                                @foreach ($LTbulkActions as $LTbulkAction)
-                                    <option value="{{ $LTbulkAction->getName() }}">
-                                        {{ $LTbulkAction->getLabel() }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @if ($LTselectedBulkAction)
-                            <div>
-                                <button wire:click="executeBulkAction"
-                                    wire:confirm="{{ $LTselectedBulkActionItem->getConfirmationMessage() }}"
-                                    class="btn btn-primary">{{ $LTbulkActionButtonLabel }}</button>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endif
             @if ($LTwithFilter)
                 <div class="d-inline-flex flex-wrap gap-3 align-items-center flex-fill">
                     @foreach ($LTfilters as $LTfilterIndex => $LTfilterItem)
@@ -57,6 +29,32 @@
                             </select>
                         </div>
                     @endforeach
+                </div>
+            @endif
+            @if ($LTwithBulkAction && count($LTselectedItems) > 0)
+                <div class="flex-fill">
+                    @if ($LTbulkActionLabel)
+                        <div>
+                            <label for="LTbulkAction" class="form-label">{{ $LTbulkActionLabel }}</label>
+                        </div>
+                    @endif
+                    <div class="d-flex gap-2 align-items-center flex-fill">
+                        <div class="flex-fill">
+                            <select class="form-select" wire:model.live="LTselectedBulkAction">
+                                <option value="">{{ $LTbulkActionOptionsLabel }}</option>
+                                @foreach ($LTbulkActions as $LTbulkAction)
+                                    <option value="{{ $LTbulkAction->getName() }}">
+                                        {{ $LTbulkAction->getLabel() }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <button wire:click="executeBulkAction"
+                                wire:confirm="{{ $LTselectedBulkAction ? $LTselectedBulkActionItem->getConfirmationMessage() : $LTbulkActionOptionsLabel }}"
+                                class="btn btn-primary">{{ $LTbulkActionButtonLabel }}</button>
+                        </div>
+                    </div>
                 </div>
             @endif
             @if ($LTwithExport)
@@ -84,6 +82,11 @@
             @endforeach
         </div>
     @endif
+    <div wire:loading.delay class="w-100 mb-3 bg-white">
+        <div class="border p-2 rounded">
+            Loading...
+        </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped shadow-sm">
             <thead class="table-light">

@@ -2,14 +2,11 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
-use Livewire\Attributes\Url;
+use RuangDeveloper\LivewireTable\Traits\WithBulkAction;
 
 trait WithSorting
 {
-    #[Url(as: 'sort')]
     public $LTsortBy = '';
-
-    #[Url(as: 'direction')]
     public $LTsortDirection = '';
 
     public function sort(string $sortBy): void
@@ -17,9 +14,11 @@ trait WithSorting
         if ($this->LTsortBy === $sortBy) {
             if ($this->LTsortDirection === 'asc') {
                 $this->LTsortDirection = 'desc';
-            } else {
+            } elseif ($this->LTsortDirection === 'desc') {
                 $this->LTsortBy = '';
                 $this->LTsortDirection = '';
+            } else {
+                $this->LTsortDirection = 'asc';
             }
         } else {
             $this->LTsortBy = $sortBy;
@@ -27,20 +26,43 @@ trait WithSorting
         }
 
         $this->resetPage();
-        $this->reset([
-            'LTselectedItems',
-            'LTisAllSelected',
-            'LTselectedBulkAction'
-        ]);
+        if (in_array(WithBulkAction::class, class_uses($this))) {
+            $this->reset([
+                'LTselectedItems',
+                'LTisAllSelected',
+                'LTselectedBulkAction',
+            ]);
+        }
     }
 
-    protected function getSortBy(): string
+    public function enableSoringQueryString(): bool
+    {
+        return false;
+    }
+
+    public function getSortBy(): string
     {
         return $this->LTsortBy;
     }
 
-    protected function getSortDirection(): string
+    public function getSortDirection(): string
     {
         return $this->LTsortDirection;
+    }
+
+    protected function queryStringWithSorting()
+    {
+        if (!$this->enableSoringQueryString()) return [];
+
+        return [
+            'LTsortBy' => [
+                'as' => 'sort',
+                'except' => '',
+            ],
+            'LTsortDirection' => [
+                'as' => 'direction',
+                'except' => '',
+            ],
+        ];
     }
 }

@@ -20,23 +20,24 @@ abstract class LivewireTable extends Component
 
     const THEME_BOOTSTRAP = 'bootstrap';
     const THEME_TAILWIND = 'tailwind';
+    const THEME_CUSTOM = 'custom';
 
-    public function tableTheme(): string
+    public function getTableTheme(): string
     {
         return self::THEME_BOOTSTRAP;
     }
 
-    public function columns(): array
+    public function getColumns(): array
     {
         return [];
     }
 
-    public function data(): Collection|LengthAwarePaginator|Paginator|array
+    public function getData(): Collection|LengthAwarePaginator|Paginator|array
     {
         return [];
     }
 
-    public function noDataMessage(): string
+    public function getNoDataMessage(): string
     {
         return 'No data available.';
     }
@@ -73,32 +74,32 @@ abstract class LivewireTable extends Component
 
     public function render()
     {
-        $viewData['LTcolumns'] = $this->columns();
+        $viewData['LTcolumns'] = $this->getColumns();
         $viewData['LTwithColumnSelection'] = $this->withColumnSelection();
         if ($viewData['LTwithColumnSelection']) {
             $viewData['LTcolumns'] = $this->getSelectedColumns();
             $viewData['LTunselectedColumns'] = $this->getUnselectedColumns();
         }
-        $viewData['LTdata'] = $this->data();
+        $viewData['LTdata'] = $this->getData();
         $viewData['LTisPaginated'] = $viewData['LTdata'] instanceof LengthAwarePaginator || $viewData['LTdata'] instanceof Paginator;
-        $viewData['LTnoDataMessage'] = $this->noDataMessage();
+        $viewData['LTnoDataMessage'] = $this->getNoDataMessage();
         $viewData['LTwithSearching'] = $this->withSearching();
         if ($viewData['LTwithSearching']) {
-            $viewData['LTsearchInputPlaceholder'] = $this->searchInputPlaceholder();
-            $viewData['LTsearchLabel'] = $this->searchLabel();
+            $viewData['LTsearchInputPlaceholder'] = $this->getSearchInputPlaceholder();
+            $viewData['LTsearchLabel'] = $this->getSearchLabel();
         }
         $viewData['LTwithBulkAction'] = $this->withBulkAction();
         if ($viewData['LTwithBulkAction']) {
-            $viewData['LTbulkActions'] = $this->bulkActions();
-            $viewData['LTbulkActionLabel'] = $this->bulkActionLabel();
-            $viewData['LTbulkActionCheckBoxFiller'] = $this->bulkActionCheckBoxFiller();
-            $viewData['LTbulkActionButtonLabel'] = $this->bulkActionButtonLabel();
-            $viewData['LTbulkActionOptionsLabel'] = $this->bulkActionOptionsLabel();
+            $viewData['LTbulkActions'] = $this->getBulkActions();
+            $viewData['LTbulkActionLabel'] = $this->getBulkActionLabel();
+            $viewData['LTbulkActionCheckBoxFiller'] = $this->getBulkActionCheckBoxFiller();
+            $viewData['LTbulkActionButtonLabel'] = $this->getBulkActionButtonLabel();
+            $viewData['LTbulkActionOptionsLabel'] = $this->getBulkActionOptionsLabel();
             $viewData['LTselectedBulkActionItem'] = $this->getSelectedBulkAction();
         }
         $viewData['LTwithFilter'] = $this->withFilter();
         if ($viewData['LTwithFilter']) {
-            $viewData['LTfilters'] = $this->filters();
+            $viewData['LTfilters'] = $this->getFilters();
         }
         $viewData['LTwithPagination'] = $this->withPagination();
         if ($viewData['LTwithPagination']) {
@@ -106,10 +107,10 @@ abstract class LivewireTable extends Component
         }
         $viewData['LTwithExport'] = $this->withExport();
         if ($viewData['LTwithExport']) {
-            $viewData['LTexportLabel'] = $this->exportLabel();
-            $viewData['LTexporters'] = $this->exporters();
+            $viewData['LTexportLabel'] = $this->getExportLabel();
+            $viewData['LTexporters'] = $this->getExporters();
         }
 
-        return view('livewire-table::' . $this->tableTheme(), $viewData);
+        return view('livewire-table::' . $this->getTableTheme(), $viewData);
     }
 }

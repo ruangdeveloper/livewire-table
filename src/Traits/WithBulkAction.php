@@ -13,29 +13,29 @@ trait WithBulkAction
 
     public string $LTselectedBulkAction = '';
 
-    public function bulkActionLabel(): ?string
+    public function getBulkActionLabel(): ?string
     {
         return 'Bulk Action';
     }
 
-    public function bulkActions(): array
+    public function getBulkActions(): array
     {
         return [];
     }
 
-    public function bulkActionCheckBoxFiller(): Closure
+    public function getBulkActionCheckBoxFiller(): Closure
     {
         return function ($item, $index) {
             return $index;
         };
     }
 
-    public function bulkActionButtonLabel(): string
+    public function getBulkActionButtonLabel(): string
     {
         return 'Apply';
     }
 
-    public function bulkActionOptionsLabel(): string
+    public function getBulkActionOptionsLabel(): string
     {
         return 'Choose an action...';
     }
@@ -47,7 +47,7 @@ trait WithBulkAction
 
     public function executeBulkAction()
     {
-        $bulkActions = collect($this->bulkActions())->map(function (BulkAction $bulkAction) {
+        $bulkActions = collect($this->getBulkActions())->map(function (BulkAction $bulkAction) {
             return [
                 'name' => $bulkAction->getName(),
                 'handler' => $bulkAction->getHandler(),
@@ -58,17 +58,22 @@ trait WithBulkAction
             return;
         }
 
+        $executionResult = null;
+
         foreach ($bulkActions as $bulkAction) {
             if ($bulkAction['name'] === $this->LTselectedBulkAction) {
-                ($bulkAction['handler'])($this->LTselectedItems);
+                $executionResult = ($bulkAction['handler'])($this->LTselectedItems);
                 $this->reset(['LTselectedItems', 'LTisAllSelected', 'LTselectedBulkAction']);
+                break;
             }
         }
+
+        return $executionResult;
     }
 
     public function getSelectedBulkAction(): ?BulkAction
     {
-        $bulkActions = $this->bulkActions();
+        $bulkActions = $this->getBulkActions();
 
         foreach ($bulkActions as $bulkAction) {
             if ($bulkAction->getName() === $this->LTselectedBulkAction) {
@@ -79,38 +84,39 @@ trait WithBulkAction
         return null;
     }
 
-    public function updatedLTSelectedItems()
+    public function updatedWithBulkAction($name, $value)
     {
-        if (count($this->LTselectedItems) > 0) {
-            if (count($this->LTselectedItems) === count($this->data())) {
-                $this->LTisAllSelected = true;
+        if (str_starts_with($name, 'LTselectedItems')) {
+            if (count($this->LTselectedItems) > 0) {
+                if (count($this->LTselectedItems) === count($this->getData())) {
+                    $this->LTisAllSelected = true;
+                } else {
+                    $this->LTisAllSelected = false;
+                }
             } else {
-                $this->LTisAllSelected = false;
+                $this->LTselectedBulkAction = '';
             }
-        } else {
-            $this->LTselectedBulkAction = '';
+
+            $this->LTselectedItems = collect($this->LTselectedItems)->map(function ($item) {
+                if (filter_var($item, FILTER_VALIDATE_INT) !== false) {
+                    return (int) $item;
+                }
+
+                return $item;
+            })->toArray();
         }
 
-        $this->LTselectedItems = collect($this->LTselectedItems)->map(function ($item) {
-            if (filter_var($item, FILTER_VALIDATE_INT) !== false) {
-                return (int) $item;
+        if (str_starts_with($name, 'LTisAllSelected')) {
+            if ($value) {
+                $selectedItems = [];
+                foreach ($this->getData() as $index => $item) {
+                    $selectedItems[] = ($this->getBulkActionCheckBoxFiller())($item, $index);
+                }
+
+                $this->LTselectedItems = $selectedItems;
+            } else {
+                $this->LTselectedItems = [];
             }
-
-            return $item;
-        })->toArray();
-    }
-
-    public function updatedLTIsAllSelected($value)
-    {
-        if ($value) {
-            $selectedItems = [];
-            foreach ($this->data() as $index => $item) {
-                $selectedItems[] = ($this->bulkActionCheckBoxFiller())($item, $index);
-            }
-
-            $this->LTselectedItems = $selectedItems;
-        } else {
-            $this->LTselectedItems = [];
         }
     }
 }

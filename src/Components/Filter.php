@@ -2,11 +2,13 @@
 
 namespace RuangDeveloper\LivewireTable\Components;
 
-class Filter
+use RuangDeveloper\LivewireTable\Interfaces\FilterInterface;
+
+class Filter implements FilterInterface
 {
-    protected string $name;
-    protected ?string $label;
-    protected array $filterOptions = [];
+    private string $name;
+    private ?string $label;
+    private array $filterOptions = [];
 
     private function __construct(string $name, ?string $label = null)
     {
@@ -14,12 +16,26 @@ class Filter
         $this->label = $label;
     }
 
-    public static function make(string $name, ?string $label = null): Filter
+    public static function make(string $name, ?string $label = null): self
     {
         return new static($name, $label);
     }
 
-    public function filterOptions(array $filterOptions): Filter
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setLabel(?string $label = null): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function setFilterOptions(array $filterOptions): self
     {
         $this->filterOptions = $filterOptions;
 

@@ -2,17 +2,19 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
-use Livewire\Attributes\Url;
-
 trait WithFilter
 {
-    #[Url(as: 'filters', keep: true)]
     public $LTfilterDataString = '';
     public $LTfilterData = [];
 
-    public function filters(): array
+    public function getFilters(): array
     {
         return [];
+    }
+
+    public function enableFilterQueryString(): bool
+    {
+        return false;
     }
 
     public function updatedWithFilter(string $name, mixed $value): void
@@ -37,7 +39,7 @@ trait WithFilter
     {
         if (empty($this->LTfilterDataString)) {
 
-            foreach ($this->filters() as $filter) {
+            foreach ($this->getFilters() as $filter) {
                 $initialValue = '';
                 if (count($filter->getFilterOptions()) > 0) {
                     $initialValue = $filter->getFilterOptions()[0]->getValue();
@@ -64,5 +66,17 @@ trait WithFilter
         }
 
         return $this->LTfilterData;
+    }
+
+    protected function queryStringWithFilter(): array
+    {
+        if (!$this->enableFilterQueryString()) return [];
+
+        return [
+            'LTfilterDataString' => [
+                'as' => 'filters',
+                'except' => '',
+            ],
+        ];
     }
 }

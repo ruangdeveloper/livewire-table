@@ -3,52 +3,67 @@
 namespace RuangDeveloper\LivewireTable\Components;
 
 use Closure;
+use RuangDeveloper\LivewireTable\Interfaces\ColumnInterface;
 
-class Column
+class Column implements ColumnInterface
 {
-    protected string $name;
-    protected string $label;
-    protected bool $sortable = false;
-    protected ?Closure $render = null;
-    protected ?Closure $exportRender = null;
-    protected bool $hidden = false;
+    private string $name;
+    private string $label;
+    private bool $sortable = false;
+    private Closure $renderer;
+    private Closure $exportRenderer;
+    private bool $hidden = false;
 
-    private function __construct(string $name, string $label)
+    public function __construct(string $name, string $label)
     {
         $this->name = $name;
         $this->label = $label;
-        $this->sortable = false;
     }
 
-    public static function make(string $name, string $label): Column
+    public static function make(string $name, string $label): self
     {
         return new static($name, $label);
     }
 
-    public function sortable(bool $sortable = true): Column
+    public function setSortable(bool $sortable = true): self
     {
         $this->sortable = $sortable;
 
         return $this;
     }
 
-    public function render(Closure $render): Column
+    public function setRenderer(Closure $renderer): self
     {
-        $this->render = $render;
+        $this->renderer = $renderer;
+        $this->exportRenderer = $renderer;
 
         return $this;
     }
 
-    public function exportRender(Closure $exportRender): Column
+    public function setExportRenderer(Closure $exportRenderer): self
     {
-        $this->exportRender = $exportRender;
+        $this->exportRenderer = $exportRenderer;
 
         return $this;
     }
 
-    public function hidden(bool $hidden = false): Column
+    public function setHidden(bool $hidden = false): self
     {
         $this->hidden = $hidden;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
 
         return $this;
     }
@@ -68,18 +83,14 @@ class Column
         return $this->sortable;
     }
 
-    public function getRenderer(): ?Closure
+    public function getRenderer(): Closure
     {
-        return $this->render;
+        return $this->renderer;
     }
 
-    public function getExportRenderer(): ?Closure
+    public function getExportRenderer(): Closure
     {
-        if ($this->exportRender) {
-            return $this->exportRender;
-        }
-
-        return $this->render;
+        return $this->exportRenderer;
     }
 
     public function isHidden(): bool

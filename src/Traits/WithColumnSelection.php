@@ -2,20 +2,23 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
-use Livewire\Attributes\Url;
 use RuangDeveloper\LivewireTable\Components\Column;
 
 trait WithColumnSelection
 {
-    #[Url(as: 'columns', keep: true)]
     public $LTSelectedColumnsString = '';
 
     public $LTSelectedColumns = [];
 
+    public function enableColumnSelectionQueryString(): bool
+    {
+        return false;
+    }
+
     public function mountWithColumnSelection(): void
     {
         if (empty($this->LTSelectedColumnsString)) {
-            $this->LTSelectedColumns = collect($this->columns())
+            $this->LTSelectedColumns = collect($this->getColumns())
                 ->filter(function (Column $column) {
                     return $column->isHidden() === false;
                 })
@@ -31,7 +34,7 @@ trait WithColumnSelection
 
     public function getSelectedColumns(): array
     {
-        return collect($this->columns())
+        return collect($this->getColumns())
             ->filter(function (Column $column) {
                 return in_array($column->getName(), $this->LTSelectedColumns) && $column->isHidden() === false;
             })
@@ -40,7 +43,7 @@ trait WithColumnSelection
 
     public function getUnselectedColumns(): array
     {
-        return collect($this->columns())
+        return collect($this->getColumns())
             ->filter(function (Column $column) {
                 return !in_array($column->getName(), $this->LTSelectedColumns) && $column->isHidden() === false;
             })->toArray();
@@ -64,5 +67,17 @@ trait WithColumnSelection
             ]);
         }
         $this->LTSelectedColumnsString = implode(',', $this->LTSelectedColumns);
+    }
+
+    protected function queryStringWithColumnSelection()
+    {
+        if (!$this->enableColumnSelectionQueryString()) return [];
+
+        return [
+            'LTSelectedColumnsString' => [
+                'as' => 'columns',
+                'except' => '',
+            ],
+        ];
     }
 }

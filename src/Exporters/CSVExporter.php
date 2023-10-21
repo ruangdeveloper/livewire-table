@@ -2,49 +2,61 @@
 
 namespace RuangDeveloper\LivewireTable\Exporters;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use RuangDeveloper\LivewireTable\Interfaces\ExporterInterface;
 
 class CSVExporter implements ExporterInterface
 {
-    protected string $fileName = 'export.csv';
-    protected string $delimiter = ',';
-    protected bool $withHeader = true;
-    protected string $label = 'CSV';
+    private string $fileName = 'export.csv';
+    private string $delimiter = ',';
+    private bool $withHeader = true;
+    private string $label = 'CSV';
+    private string $name = 'csv';
+
 
     public function __construct(?string $fileName = null)
     {
         $this->fileName = $fileName;
     }
 
-    public static function make(?string $fileName = null): CSVExporter
+    public static function make(?string $fileName = null): self
     {
         return new static($fileName);
     }
 
-    public function fileName(string $fileName): CSVExporter
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setLabel(string $label): self
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function setFileName(string $fileName): self
     {
         $this->fileName = $fileName;
 
         return $this;
     }
 
-    public function delimiter(string $delimiter): CSVExporter
+    public function setDelimiter(string $delimiter): self
     {
         $this->delimiter = $delimiter;
 
         return $this;
     }
 
-    public function withHeader(bool $withHeader): CSVExporter
+    public function setWithHeader(bool $withHeader): self
     {
         $this->withHeader = $withHeader;
-
-        return $this;
-    }
-
-    public function label(string $label): CSVExporter
-    {
-        $this->label = $label;
 
         return $this;
     }
@@ -56,10 +68,10 @@ class CSVExporter implements ExporterInterface
 
     public function getName(): string
     {
-        return 'csv';
+        return $this->name;
     }
 
-    public function execute(array $columns, \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Contracts\Pagination\Paginator|\Illuminate\Database\Eloquent\Collection|array $data): mixed
+    public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed
     {
         $filename = $this->fileName ?? 'export.csv';
         $handle = fopen($filename, 'w+');

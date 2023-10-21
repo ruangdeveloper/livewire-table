@@ -10,29 +10,37 @@ use stdClass;
 
 class JSONExporter implements ExporterInterface
 {
-    protected string $fileName = 'export.json';
-    protected string $label = 'JSON';
+    private string $fileName = 'export.json';
+    private string $label = 'JSON';
+    private string $name = 'json';
 
     public function __construct(?string $fileName = null)
     {
         $this->fileName = $fileName;
     }
 
-    public static function make(?string $fileName = null): JSONExporter
+    public static function make(?string $fileName = null): self
     {
         return new static($fileName);
     }
 
-    public function fileName(string $fileName): JSONExporter
+    public function setFileName(string $fileName): self
     {
         $this->fileName = $fileName;
 
         return $this;
     }
 
-    public function label(string $label): JSONExporter
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
@@ -44,7 +52,7 @@ class JSONExporter implements ExporterInterface
 
     public function getName(): string
     {
-        return 'json';
+        return $this->name;
     }
 
     public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed

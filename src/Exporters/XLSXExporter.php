@@ -2,51 +2,62 @@
 
 namespace RuangDeveloper\LivewireTable\Exporters;
 
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use RuangDeveloper\LivewireTable\Interfaces\ExporterInterface;
 
 class XLSXExporter implements ExporterInterface
 {
-    protected string $fileName = 'export.xlsx';
-    protected string $sheetName = 'data';
-    protected bool $withHeader = true;
-    protected string $label = 'XLSX';
+    private string $fileName = 'export.xlsx';
+    private string $sheetName = 'data';
+    private bool $withHeader = true;
+    private string $label = 'XLSX';
+    private string $name = 'xlsx';
 
     public function __construct(?string $fileName = null)
     {
         $this->fileName = $fileName;
     }
 
-    public static function make(?string $fileName = null): XLSXExporter
+    public static function make(?string $fileName = null): self
     {
         return new static($fileName);
     }
 
-    public function fileName(string $fileName): XLSXExporter
+    public function setFileName(string $fileName): self
     {
         $this->fileName = $fileName;
 
         return $this;
     }
 
-    public function sheetName(string $sheetName): XLSXExporter
+    public function setSheetName(string $sheetName): self
     {
         $this->sheetName = $sheetName;
 
         return $this;
     }
 
-    public function withHeader(bool $withHeader): XLSXExporter
+    public function setWithHeader(bool $withHeader): self
     {
         $this->withHeader = $withHeader;
 
         return $this;
     }
 
-    public function label(string $label): XLSXExporter
+    public function setLabel(string $label): self
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
@@ -58,10 +69,10 @@ class XLSXExporter implements ExporterInterface
 
     public function getName(): string
     {
-        return 'xlsx';
+        return $this->name;
     }
 
-    public function execute(array $columns, \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Contracts\Pagination\Paginator|\Illuminate\Database\Eloquent\Collection|array $data): mixed
+    public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed
     {
         $filename = $this->fileName ?? 'export.xlsx';
 

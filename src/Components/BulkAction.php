@@ -1,15 +1,16 @@
 <?php
 
-namespace RuangDeveloper\LivewireTable;
+namespace RuangDeveloper\LivewireTable\Components;
 
 use Closure;
+use RuangDeveloper\LivewireTable\Interfaces\BulkActionInterface;
 
-class BulkAction
+class BulkAction implements BulkActionInterface
 {
-    protected string $name;
-    protected string $label;
-    protected Closure $handler;
-    protected string $confirmationMessage = 'Are you sure?';
+    private string $name;
+    private string $label;
+    private Closure $handler;
+    private string $confirmationMessage = 'Are you sure?';
 
     private function __construct(string $name, string $label)
     {
@@ -17,19 +18,19 @@ class BulkAction
         $this->label = $label;
     }
 
-    public static function make(string $name, string $label): BulkAction
+    public static function make(string $name, string $label): self
     {
         return new static($name, $label);
     }
 
-    public function handler(Closure $handler): BulkAction
+    public function setHandler(Closure $handler): self
     {
         $this->handler = $handler;
 
         return $this;
     }
 
-    public function confirmationMessage(string $confirmationMessage): BulkAction
+    public function setConfirmationMessage(string $confirmationMessage): self
     {
         $this->confirmationMessage = $confirmationMessage;
 

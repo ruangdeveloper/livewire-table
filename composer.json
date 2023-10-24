@@ -1,5 +1,4 @@
 {
-    "version": "1.0.0",
     "name": "ruangdeveloper/livewire-table",
     "description": "Create beautiful table with livewire",
     "type": "library",

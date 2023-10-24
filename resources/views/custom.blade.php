@@ -43,9 +43,13 @@
                             <select wire:model.live="LTselectedBulkAction">
                                 <option value="">{{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
-                                    <option value="{{ $LTbulkAction->getName() }}">
-                                        {{ $LTbulkAction->getLabel() }}
-                                    </option>
+                                    @if ($LTbulkAction->isHidden())
+                                        @continue
+                                    @else
+                                        <option value="{{ $LTbulkAction->getName() }}">
+                                            {{ $LTbulkAction->getLabel() }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

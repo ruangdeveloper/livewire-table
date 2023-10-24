@@ -11,6 +11,7 @@ class BulkAction implements BulkActionInterface
     private string $label;
     private Closure $handler;
     private string $confirmationMessage = 'Are you sure?';
+    private bool $isHidden = false;
 
     private function __construct(string $name, string $label)
     {
@@ -37,6 +38,13 @@ class BulkAction implements BulkActionInterface
         return $this;
     }
 
+    public function setHidden(bool $isHidden): self
+    {
+        $this->isHidden = $isHidden;
+
+        return $this;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -55,5 +63,10 @@ class BulkAction implements BulkActionInterface
     public function getConfirmationMessage(): string
     {
         return $this->confirmationMessage;
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->isHidden;
     }
 }

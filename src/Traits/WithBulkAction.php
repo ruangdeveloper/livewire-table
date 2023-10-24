@@ -51,6 +51,7 @@ trait WithBulkAction
             return [
                 'name' => $bulkAction->getName(),
                 'handler' => $bulkAction->getHandler(),
+                'isHidden' => $bulkAction->isHidden(),
             ];
         })->toArray();
 
@@ -61,7 +62,10 @@ trait WithBulkAction
         $executionResult = null;
 
         foreach ($bulkActions as $bulkAction) {
-            if ($bulkAction['name'] === $this->LTselectedBulkAction) {
+            if (
+                $bulkAction['name'] === $this->LTselectedBulkAction &&
+                !$bulkAction['isHidden']
+            ) {
                 $executionResult = ($bulkAction['handler'])($this->LTselectedItems);
                 $this->reset(['LTselectedItems', 'LTisAllSelected', 'LTselectedBulkAction']);
                 break;

@@ -20,3 +20,15 @@ All notable changes to this project will be documented in this file.
 ### Known Issues
 
 - This package still cannot handle it well if it is used to display two tables on the same page when using a query string in the URL. The query string used will break some features. Disabling query strings in the URL will temporarily resolve this problem. We hope it can be resolved in the next release.
+
+## [1.1.0] - 2023-10-25
+
+### Added
+
+- hidden options to bulk action
+
+### Changed
+
+### Removed
+
+### Known Issues

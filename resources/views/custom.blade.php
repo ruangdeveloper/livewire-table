@@ -41,13 +41,15 @@
                     @endif
                     <div>
                         <div>
-                            <select wire:model.live="LTselectedBulkAction">
-                                <option value="">{{ $LTbulkActionOptionsLabel }}</option>
+                            <select wire:model="LTselectedBulkAction" id="LTselectedBulkAction__{{ $this->getId() }}">
+                                <option value="" data-confirmation-message="{{ $LTbulkActionOptionsLabel }}">
+                                    {{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
                                         @continue
                                     @else
-                                        <option value="{{ $LTbulkAction->getName() }}">
+                                        <option value="{{ $LTbulkAction->getName() }}"
+                                            data-confirmation-message="{{ $LTbulkAction->getConfirmationMessage() }}">
                                             {{ $LTbulkAction->getLabel() }}
                                         </option>
                                     @endif
@@ -55,8 +57,8 @@
                             </select>
                         </div>
                         <div>
-                            <button wire:click="executeBulkAction"
-                                wire:confirm="{{ $LTselectedBulkAction ? $LTselectedBulkActionItem->getConfirmationMessage() : $LTbulkActionOptionsLabel }}">{{ $LTbulkActionButtonLabel }}</button>
+                            <button wire:click="executeBulkAction" id="LTbulkActionButton__{{ $this->getId() }}"
+                                wire:confirm="{{ $LTbulkActionOptionsLabel }}">{{ $LTbulkActionButtonLabel }}</button>
                         </div>
                     </div>
                 </div>
@@ -245,4 +247,5 @@
             Loading...
         </div>
     </div>
+    @include('livewire-table::script')
 </div>

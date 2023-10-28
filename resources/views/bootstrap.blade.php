@@ -7,7 +7,8 @@
                         <label for="LTsearch" class="form-label">{{ $LTsearchLabel }}</label>
                     @endif
                     <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch__{{ $this->getId() }}"
-                        class="form-control bg-light" type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
+                        class="form-control bg-light" type="search" placeholder="{{ $LTsearchInputPlaceholder }}"
+                        required>
                 </div>
             @endif
             @if ($LTwithFilter)
@@ -42,13 +43,16 @@
                     @endif
                     <div class="d-flex gap-2 align-items-center flex-fill">
                         <div class="flex-fill">
-                            <select class="form-select bg-light" wire:model="LTselectedBulkAction">
-                                <option value="">{{ $LTbulkActionOptionsLabel }}</option>
+                            <select class="form-select bg-light" wire:model="LTselectedBulkAction"
+                                id="LTselectedBulkAction__{{ $this->getId() }}">
+                                <option value="" data-confirmation-message="{{ $LTbulkActionOptionsLabel }}">
+                                    {{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
                                         @continue
                                     @else
-                                        <option value="{{ $LTbulkAction->getName() }}">
+                                        <option value="{{ $LTbulkAction->getName() }}"
+                                            data-confirmation-message="{{ $LTbulkAction->getConfirmationMessage() }}">
                                             {{ $LTbulkAction->getLabel() }}
                                         </option>
                                     @endif
@@ -56,8 +60,8 @@
                             </select>
                         </div>
                         <div>
-                            <button wire:click="executeBulkAction"
-                                wire:confirm="{{ $LTselectedBulkAction ? $LTselectedBulkActionItem->getConfirmationMessage() : $LTbulkActionOptionsLabel }}"
+                            <button wire:click="executeBulkAction" wire:confirm="{{ $LTbulkActionOptionsLabel }}"
+                                id="LTbulkActionButton__{{ $this->getId() }}"
                                 class="btn btn-primary">{{ $LTbulkActionButtonLabel }}</button>
                         </div>
                     </div>
@@ -248,4 +252,5 @@
             Loading...
         </div>
     </div>
+    @include('livewire-table::script')
 </div>

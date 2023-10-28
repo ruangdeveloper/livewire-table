@@ -30,6 +30,19 @@ trait WithPagination
         }
     }
 
+    public function updatedPaginators($page, $pageName = 'page')
+    {
+        $this->LTperPage = $this->getPerPage();
+
+        if (in_array(WithBulkAction::class, class_uses($this))) {
+            $this->reset([
+                'LTselectedItems',
+                'LTisAllSelected',
+                'LTselectedBulkAction',
+            ]);
+        }
+    }
+
     public function getPerPageOptions(): array
     {
         return [10, 25, 50, 100];

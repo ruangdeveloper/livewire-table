@@ -206,7 +206,8 @@
                                 <div class="flex justify-start items-center">
                                     <input wire:model.live="LTselectedItems" wire:loading.attr="disabled"
                                         wire:key="bulk-action-check-{{ $LTdataIndex }}"
-                                        id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}" type="checkbox"
+                                        id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}"
+                                        type="checkbox"
                                         value="{{ call_user_func($LTbulkActionCheckBoxFiller, $LTdataItem, $LTdataIndex) }}"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                                 </div>
@@ -217,7 +218,7 @@
                                 @continue
                             @else
                                 <td class="px-3 py-2 border">
-                                    {{ call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) }}
+                                    {!! call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) !!}
                                 </td>
                             @endif
                         @endforeach

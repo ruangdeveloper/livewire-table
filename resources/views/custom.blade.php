@@ -205,7 +205,7 @@
                                 @continue
                             @else
                                 <td>
-                                    {{ call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) }}
+                                    {!! call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) !!}
                                 </td>
                             @endif
                         @endforeach

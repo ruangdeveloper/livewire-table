@@ -7,7 +7,7 @@
                         <label for="LTsearch" class="form-label">{{ $LTsearchLabel }}</label>
                     @endif
                     <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch__{{ $this->getId() }}"
-                        class="form-control" type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
+                        class="form-control bg-light" type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
                 </div>
             @endif
             @if ($LTwithFilter)
@@ -20,7 +20,7 @@
                             @endif
                             <select wire:model.live="LTfilterData.{{ $LTfilterItem->getName() }}"
                                 id="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}__{{ $this->getId() }}"
-                                class="form-select">
+                                class="form-select bg-light">
                                 @foreach ($LTfilterItem->getFilterOptions() as $LTfilterOptionIndex => $LTfilterOptionItem)
                                     <option
                                         id="{{ $LTfilterOptionItem->getValue() }}__{{ $LTfilterOptionIndex }}__{{ $this->getId() }}"
@@ -42,7 +42,7 @@
                     @endif
                     <div class="d-flex gap-2 align-items-center flex-fill">
                         <div class="flex-fill">
-                            <select class="form-select" wire:model="LTselectedBulkAction">
+                            <select class="form-select bg-light" wire:model="LTselectedBulkAction">
                                 <option value="">{{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
@@ -190,7 +190,7 @@
             </thead>
             <tbody>
                 @forelse ($LTdata as $LTdataIndex => $LTdataItem)
-                    <tr>
+                    <tr class="bg-light">
                         @if ($LTwithBulkAction)
                             <td>
                                 <div class="d-flex justify-content-start align-items-center">
@@ -208,7 +208,7 @@
                                 @continue
                             @else
                                 <td>
-                                    {{ call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) }}
+                                    {!! call_user_func($LTcolumn->getRenderer(), $LTdataItem, $LTdataIndex) !!}
                                 </td>
                             @endif
                         @endforeach

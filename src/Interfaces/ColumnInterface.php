@@ -10,6 +10,7 @@ interface ColumnInterface
     public function setRenderer(Closure $render): ColumnInterface;
     public function setExportRenderer(Closure $exportRender): ColumnInterface;
     public function setHidden(bool $hidden = false): ColumnInterface;
+    public function setHiddenOnExport(bool $hiddenOnExport = false): ColumnInterface;
     public function setName(string $name): ColumnInterface;
     public function setLabel(string $label): ColumnInterface;
     public function getName(): string;
@@ -18,4 +19,5 @@ interface ColumnInterface
     public function getExportRenderer(): Closure;
     public function isSortable(): bool;
     public function isHidden(): bool;
+    public function isHiddenOnExport(): bool;
 }

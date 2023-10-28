@@ -74,8 +74,11 @@ class XLSXExporter implements ExporterInterface
 
     public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed
     {
-        $filename = $this->fileName ?? 'export.xlsx';
+        $columns = collect($columns)
+            ->filter(fn ($column) => $column->isHiddenOnExport() === false)
+            ->toArray();
 
+        $filename = $this->fileName ?? 'export.xlsx';
         $spreadsheet = new Spreadsheet();
         $activeSheet = $spreadsheet->getActiveSheet();
         $activeSheet->setTitle($this->sheetName ?? 'data');

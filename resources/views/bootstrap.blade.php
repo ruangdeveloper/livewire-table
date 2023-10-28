@@ -6,8 +6,8 @@
                     @if ($LTsearchLabel)
                         <label for="LTsearch" class="form-label">{{ $LTsearchLabel }}</label>
                     @endif
-                    <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch" class="form-control"
-                        type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
+                    <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch__{{ $this->getId() }}"
+                        class="form-control" type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
                 </div>
             @endif
             @if ($LTwithFilter)
@@ -19,9 +19,11 @@
                                     class="form-label">{{ $LTfilterItem->getLabel() }}</label>
                             @endif
                             <select wire:model.live="LTfilterData.{{ $LTfilterItem->getName() }}"
-                                id="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}" class="form-select">
+                                id="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}__{{ $this->getId() }}"
+                                class="form-select">
                                 @foreach ($LTfilterItem->getFilterOptions() as $LTfilterOptionIndex => $LTfilterOptionItem)
-                                    <option id="{{ $LTfilterOptionItem->getValue() }}__{{ $LTfilterOptionIndex }}"
+                                    <option
+                                        id="{{ $LTfilterOptionItem->getValue() }}__{{ $LTfilterOptionIndex }}__{{ $this->getId() }}"
                                         value="{{ $LTfilterOptionItem->getValue() }}">
                                         {{ $LTfilterOptionItem->getLabel() }}
                                     </option>
@@ -31,7 +33,7 @@
                     @endforeach
                 </div>
             @endif
-            @if ($LTwithBulkAction && count($LTselectedItems) > 0)
+            @if ($LTwithBulkAction)
                 <div class="flex-fill">
                     @if ($LTbulkActionLabel)
                         <div>
@@ -40,7 +42,7 @@
                     @endif
                     <div class="d-flex gap-2 align-items-center flex-fill">
                         <div class="flex-fill">
-                            <select class="form-select" wire:model.live="LTselectedBulkAction">
+                            <select class="form-select" wire:model="LTselectedBulkAction">
                                 <option value="">{{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
@@ -86,11 +88,6 @@
             @endforeach
         </div>
     @endif
-    <div wire:loading.delay class="w-100 mb-3 bg-white">
-        <div class="border p-2 rounded">
-            Loading...
-        </div>
-    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped shadow-sm">
             <thead class="table-light">
@@ -98,8 +95,9 @@
                     @if ($LTwithBulkAction)
                         <th style="cursor: pointer; width:40px;" title="Select all" scope="col">
                             <div class="d-flex justify-content-start align-items-center">
-                                <input wire:model.live="LTisAllSelected" id="bulk-action-check-all" type="checkbox"
-                                    value="true" class="form-check">
+                                <input wire:model.live="LTisAllSelected" wire:loading.attr="disabled"
+                                    id="bulk-action-check-all__{{ $this->getId() }}" type="checkbox" value="true"
+                                    class="form-check">
                             </div>
                         </th>
                     @endif
@@ -118,8 +116,8 @@
                                         $LTcolumnSortTitle = 'Click to clear sorting';
                                     }
                                 @endphp
-                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}" class="text-nowrap"
-                                    scope="col">
+                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}__{{ $this->getId() }}"
+                                    class="text-nowrap" scope="col">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div role="button" wire:click="sort('{{ $LTcolumn->getName() }}')"
                                             title="{{ $LTcolumnSortTitle }}">
@@ -166,8 +164,8 @@
                                     </div>
                                 </th>
                             @else
-                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}" class="text-nowrap"
-                                    scope="col">
+                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}__{{ $this->getId() }}"
+                                    class="text-nowrap" scope="col">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div>
                                             {{ $LTcolumn->getLabel() }}
@@ -196,9 +194,10 @@
                         @if ($LTwithBulkAction)
                             <td>
                                 <div class="d-flex justify-content-start align-items-center">
-                                    <input wire:model.live="LTselectedItems"
+                                    <input wire:model.live="LTselectedItems" wire:loading.attr="disabled"
                                         wire:key="bulk-action-check-{{ $LTdataIndex }}"
-                                        id="bulk-action-check-{{ $LTdataIndex }}" type="checkbox"
+                                        id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}"
+                                        type="checkbox"
                                         value="{{ call_user_func($LTbulkActionCheckBoxFiller, $LTdataItem, $LTdataIndex) }}"
                                         class="form-check">
                                 </div>
@@ -244,4 +243,9 @@
             </div>
         </div>
     @endif
+    <div wire:loading.delay class="w-100 mt-3 bg-white">
+        <div class="border p-2 rounded">
+            Loading...
+        </div>
+    </div>
 </div>

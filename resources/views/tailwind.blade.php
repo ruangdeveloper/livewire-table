@@ -7,7 +7,7 @@
                         <label for="LTsearch"
                             class="block mb-2 text-sm font-medium text-gray-900">{{ $LTsearchLabel }}</label>
                     @endif
-                    <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch"
+                    <input wire:model.live.debounce.500ms="LTsearch" type="search" id="LTsearch__{{ $this->getId() }}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
                         type="search" placeholder="{{ $LTsearchInputPlaceholder }}" required>
                 </div>
@@ -17,14 +17,15 @@
                     @foreach ($LTfilters as $LTfilterIndex => $LTfilterItem)
                         <div class="flex-auto">
                             @if ($LTfilterItem->getLabel())
-                                <label for="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}"
+                                <label for="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}__{{ $this->getId() }}"
                                     class="block mb-2 text-sm font-medium text-gray-900">{{ $LTfilterItem->getLabel() }}</label>
                             @endif
                             <select wire:model.live="LTfilterData.{{ $LTfilterItem->getName() }}"
                                 id="{{ $LTfilterItem->getName() }}__{{ $LTfilterIndex }}"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
                                 @foreach ($LTfilterItem->getFilterOptions() as $LTfilterOptionIndex => $LTfilterOptionItem)
-                                    <option id="{{ $LTfilterOptionItem->getValue() }}__{{ $LTfilterOptionIndex }}"
+                                    <option
+                                        id="{{ $LTfilterOptionItem->getValue() }}__{{ $LTfilterOptionIndex }}__{{ $this->getId() }}"
                                         value="{{ $LTfilterOptionItem->getValue() }}">
                                         {{ $LTfilterOptionItem->getLabel() }}
                                     </option>
@@ -34,7 +35,7 @@
                     @endforeach
                 </div>
             @endif
-            @if ($LTwithBulkAction && count($LTselectedItems) > 0)
+            @if ($LTwithBulkAction)
                 <div class="flex-auto">
                     @if ($LTbulkActionLabel)
                         <div>
@@ -46,7 +47,7 @@
                         <div class="flex-auto">
                             <select
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
-                                wire:model.live="LTselectedBulkAction">
+                                wire:model="LTselectedBulkAction">
                                 <option value="">{{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
@@ -96,11 +97,6 @@
             @endforeach
         </div>
     @endif
-    <div wire:loading.delay class="w-full mb-3 bg-gray-100">
-        <div class="border p-2 rounded-md">
-            Loading...
-        </div>
-    </div>
     <div class="relative overflow-x-auto">
         <table class="w-full text-sm text-left text-gray-500">
             <thead class="text-xs text-gray-700 bg-gray-100">
@@ -109,8 +105,8 @@
                         <th class="px-3 py-2 border" style="cursor: pointer; width:40px;" title="Select all"
                             scope="col">
                             <div class="flex justify-start items-center">
-                                <input wire:model.live="LTisAllSelected" id="bulk-action-check-all" type="checkbox"
-                                    value="true"
+                                <input wire:model.live="LTisAllSelected" wire:loading.attr="disabled"
+                                    id="bulk-action-check-all__{{ $this->getId() }}" type="checkbox" value="true"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                             </div>
                         </th>
@@ -130,7 +126,7 @@
                                         $LTcolumnSortTitle = 'Click to clear sorting';
                                     }
                                 @endphp
-                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}"
+                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}__{{ $this->getId() }}"
                                     class="px-3 py-2 border whitespace-nowrap" scope="col">
                                     <div class="flex items-center justify-between">
                                         <div role="button" wire:click="sort('{{ $LTcolumn->getName() }}')"
@@ -178,7 +174,7 @@
                                     </div>
                                 </th>
                             @else
-                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}"
+                                <th id="{{ $LTcolumn->getName() . '__' . $LTcolumnIndex }}__{{ $this->getId() }}"
                                     class="px-3 py-2 border whitespace-nowrap" scope="col">
                                     <div class="flex items-center justify-between">
                                         <div>
@@ -208,9 +204,9 @@
                         @if ($LTwithBulkAction)
                             <td class="px-3 py-2 border">
                                 <div class="flex justify-start items-center">
-                                    <input wire:model.live="LTselectedItems"
+                                    <input wire:model.live="LTselectedItems" wire:loading.attr="disabled"
                                         wire:key="bulk-action-check-{{ $LTdataIndex }}"
-                                        id="bulk-action-check-{{ $LTdataIndex }}" type="checkbox"
+                                        id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}" type="checkbox"
                                         value="{{ call_user_func($LTbulkActionCheckBoxFiller, $LTdataItem, $LTdataIndex) }}"
                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                                 </div>
@@ -258,4 +254,9 @@
             </div>
         </div>
     @endif
+    <div wire:loading.delay class="w-full mt-3 bg-gray-100">
+        <div class="border p-2 rounded-md">
+            Loading...
+        </div>
+    </div>
 </div>

@@ -3,6 +3,7 @@
 namespace RuangDeveloper\LivewireTable\Traits;
 
 use RuangDeveloper\LivewireTable\Traits\WithBulkAction;
+use RuangDeveloper\LivewireTable\Traits\WithPagination;
 
 trait WithSorting
 {
@@ -25,7 +26,10 @@ trait WithSorting
             $this->LTsortDirection = 'asc';
         }
 
-        $this->resetPage();
+        if (in_array(WithPagination::class, class_uses($this))) {
+            $this->resetPage();
+        }
+
         if (in_array(WithBulkAction::class, class_uses($this))) {
             $this->reset([
                 'LTselectedItems',

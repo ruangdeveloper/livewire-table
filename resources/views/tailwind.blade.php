@@ -47,13 +47,15 @@
                         <div class="flex-auto">
                             <select
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2"
-                                wire:model="LTselectedBulkAction">
-                                <option value="">{{ $LTbulkActionOptionsLabel }}</option>
+                                wire:model="LTselectedBulkAction" id="LTselectedBulkAction__{{ $this->getId() }}">
+                                <option value="" data-confirmation-message="{{ $LTbulkActionOptionsLabel }}">
+                                    {{ $LTbulkActionOptionsLabel }}</option>
                                 @foreach ($LTbulkActions as $LTbulkAction)
                                     @if ($LTbulkAction->isHidden())
                                         @continue
                                     @else
-                                        <option value="{{ $LTbulkAction->getName() }}">
+                                        <option value="{{ $LTbulkAction->getName() }}"
+                                            data-confirmation-message="{{ $LTbulkAction->getConfirmationMessage() }}">
                                             {{ $LTbulkAction->getLabel() }}
                                         </option>
                                     @endif
@@ -61,8 +63,8 @@
                             </select>
                         </div>
                         <div>
-                            <button wire:click="executeBulkAction"
-                                wire:confirm="{{ $LTselectedBulkAction ? $LTselectedBulkActionItem->getConfirmationMessage() : $LTbulkActionOptionsLabel }}"
+                            <button wire:click="executeBulkAction" wire:confirm="{{ $LTbulkActionOptionsLabel }}"
+                                id="LTbulkActionButton__{{ $this->getId() }}"
                                 class="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600">{{ $LTbulkActionButtonLabel }}</button>
                         </div>
                         @if ($LTselectedBulkAction)
@@ -260,4 +262,5 @@
             Loading...
         </div>
     </div>
+    @include('livewire-table::script')
 </div>

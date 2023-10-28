@@ -252,10 +252,5 @@
             </div>
         </div>
     @endif
-    <div wire:loading.delay class="w-100 mt-3 bg-white">
-        <div class="border p-2 rounded">
-            Loading...
-        </div>
-    </div>
     @include('livewire-table::script')
 </div>

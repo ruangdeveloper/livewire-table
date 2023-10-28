@@ -20,7 +20,9 @@ trait WithFilter
     public function updatedWithFilter(string $name, mixed $value): void
     {
         if (str_starts_with($name, 'LTfilterData.')) {
-            $this->resetPage();
+            if (in_array(WithPagination::class, class_uses($this))) {
+                $this->resetPage();
+            }
             if (in_array(WithBulkAction::class, class_uses($this))) {
                 $this->reset([
                     'LTselectedItems',

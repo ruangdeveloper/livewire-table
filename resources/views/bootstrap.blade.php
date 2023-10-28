@@ -92,14 +92,19 @@
             @endforeach
         </div>
     @endif
-    <div class="table-responsive">
+    <div class="table-responsive position-relative">
+        <div wire:loading class="position-absolute h-100 w-100" style="backdrop-filter: blur(1px)">
+            <div class="text-center mt-4">
+                Loading...
+            </div>
+        </div>
         <table class="table table-bordered table-striped shadow-sm">
             <thead class="table-light">
                 <tr>
                     @if ($LTwithBulkAction)
                         <th style="cursor: pointer; width:40px;" title="Select all" scope="col">
                             <div class="d-flex justify-content-start align-items-center">
-                                <input wire:model.live="LTisAllSelected" wire:loading.attr="disabled"
+                                <input wire:model.live="LTisAllSelected"
                                     id="bulk-action-check-all__{{ $this->getId() }}" type="checkbox" value="true"
                                     class="form-check">
                             </div>
@@ -198,7 +203,7 @@
                         @if ($LTwithBulkAction)
                             <td>
                                 <div class="d-flex justify-content-start align-items-center">
-                                    <input wire:model.live="LTselectedItems" wire:loading.attr="disabled"
+                                    <input wire:model.live="LTselectedItems"
                                         wire:key="bulk-action-check-{{ $LTdataIndex }}"
                                         id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}"
                                         type="checkbox"

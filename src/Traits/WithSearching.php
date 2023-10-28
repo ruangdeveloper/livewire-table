@@ -2,6 +2,9 @@
 
 namespace RuangDeveloper\LivewireTable\Traits;
 
+use RuangDeveloper\LivewireTable\Traits\WithPagination;
+use RuangDeveloper\LivewireTable\Traits\WithBulkAction;
+
 trait WithSearching
 {
     public $LTsearch = '';
@@ -19,7 +22,9 @@ trait WithSearching
     public function updatedWithSearching($name, $value)
     {
         if (str_starts_with($name, 'LTsearch')) {
-            $this->resetPage();
+            if (in_array(WithPagination::class, class_uses($this))) {
+                $this->resetPage();
+            }
             if (in_array(WithBulkAction::class, class_uses($this))) {
                 $this->reset([
                     'LTselectedItems',

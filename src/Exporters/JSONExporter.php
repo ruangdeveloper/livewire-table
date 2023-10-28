@@ -57,6 +57,10 @@ class JSONExporter implements ExporterInterface
 
     public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed
     {
+        $columns = collect($columns)
+            ->filter(fn ($column) => $column->isHiddenOnExport() === false)
+            ->toArray();
+            
         $filename = $this->fileName ?? 'export.json';
         $handle = fopen($filename, 'w+');
         $jsonData = [];

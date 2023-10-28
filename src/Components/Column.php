@@ -13,6 +13,7 @@ class Column implements ColumnInterface
     private Closure $renderer;
     private Closure $exportRenderer;
     private bool $hidden = false;
+    private bool $hiddenOnExport = false;
 
     public function __construct(string $name, string $label)
     {
@@ -50,6 +51,13 @@ class Column implements ColumnInterface
     public function setHidden(bool $hidden = false): self
     {
         $this->hidden = $hidden;
+
+        return $this;
+    }
+
+    public function setHiddenOnExport(bool $hiddenOnExport = false): self
+    {
+        $this->hiddenOnExport = $hiddenOnExport;
 
         return $this;
     }
@@ -96,5 +104,10 @@ class Column implements ColumnInterface
     public function isHidden(): bool
     {
         return $this->hidden;
+    }
+
+    public function isHiddenOnExport(): bool
+    {
+        return $this->hiddenOnExport;
     }
 }

@@ -73,6 +73,10 @@ class CSVExporter implements ExporterInterface
 
     public function execute(array $columns, LengthAwarePaginator|Paginator|Collection|array $data): mixed
     {
+        $columns = collect($columns)
+            ->filter(fn ($column) => $column->isHiddenOnExport() === false)
+            ->toArray();
+            
         $filename = $this->fileName ?? 'export.csv';
         $handle = fopen($filename, 'w+');
 

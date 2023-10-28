@@ -90,6 +90,11 @@
         </div>
     @endif
     <div>
+        <div wire:loading>
+            <div>
+                Loading...
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -242,10 +247,5 @@
             </div>
         </div>
     @endif
-    <div wire:loading.delay>
-        <div>
-            Loading...
-        </div>
-    </div>
     @include('livewire-table::script')
 </div>

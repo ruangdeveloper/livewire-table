@@ -100,6 +100,11 @@
         </div>
     @endif
     <div class="relative overflow-x-auto">
+        <div wire:loading class="absolute h-full w-full" style="backdrop-filter: blur(1px);">
+            <div class="text-center mt-10">
+                Loading...
+            </div>
+        </div>
         <table class="w-full text-sm text-left text-gray-500">
             <thead class="text-xs text-gray-700 bg-gray-100">
                 <tr>
@@ -107,7 +112,7 @@
                         <th class="px-3 py-2 border" style="cursor: pointer; width:40px;" title="Select all"
                             scope="col">
                             <div class="flex justify-start items-center">
-                                <input wire:model.live="LTisAllSelected" wire:loading.attr="disabled"
+                                <input wire:model.live="LTisAllSelected"
                                     id="bulk-action-check-all__{{ $this->getId() }}" type="checkbox" value="true"
                                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                             </div>
@@ -206,7 +211,7 @@
                         @if ($LTwithBulkAction)
                             <td class="px-3 py-2 border">
                                 <div class="flex justify-start items-center">
-                                    <input wire:model.live="LTselectedItems" wire:loading.attr="disabled"
+                                    <input wire:model.live="LTselectedItems"
                                         wire:key="bulk-action-check-{{ $LTdataIndex }}"
                                         id="bulk-action-check-{{ $LTdataIndex }}__{{ $this->getId() }}"
                                         type="checkbox"
@@ -257,10 +262,5 @@
             </div>
         </div>
     @endif
-    <div wire:loading.delay class="w-full mt-3 bg-gray-100">
-        <div class="border p-2 rounded-md">
-            Loading...
-        </div>
-    </div>
     @include('livewire-table::script')
 </div>

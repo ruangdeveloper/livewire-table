@@ -247,9 +247,9 @@
                 <div class="flex-1">
                     {{ $LTdata->links() }}
                 </div>
-                @if ($LTwithPagination && $LTdata->hasPages())
+                @if ($LTwithPagination)
                     <div>
-                        <select wire:model.live="LTperPage"
+                        <select title="Items per page" wire:model.live="LTperPage"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-2">
                             @foreach ($LTperPageOptions as $LTperPageOption)
                                 <option value="{{ $LTperPageOption }}">
@@ -262,5 +262,4 @@
             </div>
         </div>
     @endif
-    @include('livewire-table::script')
 </div>

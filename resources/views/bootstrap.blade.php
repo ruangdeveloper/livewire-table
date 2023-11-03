@@ -238,7 +238,7 @@
                 <div>
                     {{ $LTdata->links() }}
                 </div>
-                @if ($LTwithPagination && $LTdata->hasPages())
+                @if ($LTwithPagination)
                     <div>
                         <select wire:model.live="LTperPage" class="form-select mb-3">
                             @foreach ($LTperPageOptions as $LTperPageOption)
@@ -252,5 +252,4 @@
             </div>
         </div>
     @endif
-    @include('livewire-table::script')
 </div>

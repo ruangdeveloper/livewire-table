@@ -24,7 +24,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "laravel/framework": "^10.0.0",
+        "laravel/framework": "^11.0.0",
         "livewire/livewire": "^3.0.10",
         "phpoffice/phpspreadsheet": "^1.29"
     }
